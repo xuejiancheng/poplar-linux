@@ -16,7 +16,9 @@
 
 OBJCOPYFLAGS_Image :=-O binary -R .note -R .note.gnu.build-id -R .comment -S
 
-targets := Image Image.gz
+targets := Image Image.gz uImage
+
+DTB_OBJS := $(shell find $(obj)/dts/ -name hi3798\*.dtb)
 
 $(obj)/Image: vmlinux FORCE
 	$(call if_changed,objcopy)
@@ -35,6 +37,28 @@ $(obj)/Image.lzma: $(obj)/Image FORCE
 
 $(obj)/Image.lzo: $(obj)/Image FORCE
 	$(call if_changed,lzo)
+
+UIMAGE_LOADADDR=$(TEXT_OFFSET)
+UIMAGE_ENTRYADDR=$(TEXT_OFFSET)
+#UIMAGE_COMPRESSION = gzip
+check_for_multiple_loadaddr = \
+if [ $(words $(UIMAGE_LOADADDR)) -ne 1 ]; then \
+	echo 'multiple (or no) load addresses: $(UIMAGE_LOADADDR)'; \
+	echo 'This is incompatible with uImages'; \
+	echo 'Specify LOADADDR on the commandline to build an uImage'; \
+	false; \
+fi
+
+rm_uimage:
+	@rm -f $(obj)/uImage
+
+$(obj)/uImage:  $(obj)/Image rm_uimage FORCE
+	@$(check_for_multiple_loadaddr)
+	@dd if=$< of=$<.dd ibs=4096 conv=sync && mv $<.dd $<
+	$(call if_changed,uimage)
+	@$(kecho) '  CAT   $(DTB_OBJS) to $@'
+	@cat $(DTB_OBJS) >>$@
+	@$(kecho) '  Image $@ is ready'
 
 install:
 	$(CONFIG_SHELL) $(srctree)/$(src)/install.sh $(KERNELRELEASE) \

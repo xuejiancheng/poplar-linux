@@ -101,6 +101,7 @@ core-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
 
 # Default target when executing plain make
 KBUILD_IMAGE	:= Image.gz
+
 KBUILD_DTBS	:= dtbs
 
 all:	$(KBUILD_IMAGE) $(KBUILD_DTBS)
@@ -111,6 +112,9 @@ Image: vmlinux
 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
 
 Image.%: Image
+	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
+
+uImage: vmlinux dtbs
 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
 
 zinstall install:
