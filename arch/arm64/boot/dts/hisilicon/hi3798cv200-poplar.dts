@@ -1,0 +1,106 @@
+/*
+ * DTS File for HiSilicon Poplar Development Board
+ * Copyright (c) 2016 Hisilicon Limited.
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License version 2 as
+ *  publishhed by the Free Software Foundation.
+ */
+
+/dts-v1/;
+
+/memreserve/ 0x00000000 0x00010000;
+/* reserved for warmreset */
+/memreserve/ 0xfff0000 0x00100000;
+/* reserved for arm trustedfirmware */
+/memreserve/ 0x4800000 0x00200000;
+
+#include <dt-bindings/gpio/gpio.h>
+#include "hi3798cv200.dtsi"
+#include "poplar-pinctrl.dtsi"
+
+/ {
+	model = "HiSilicon Poplar Development Board";
+	compatible = "hisilicon,hi3798cv200-poplar", "hisilicon,hi3798cv200";
+
+	aliases {
+		serial0 = &uart0;
+		serial1 = &uart2;
+		spi0 = &spi0;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+		bootargs = "mem=2G root=/dev/mmcblk0p7 rootfstype=ext4 rootwait rw blkdevparts=mmcblk0:2M(boot),4M(baseparam),4M(pqparam),4M(logo),88M(trustedcore),32M(kernel),256M(rootfs),-(others) earlycon";
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0x000000000 0x00000000 0x00000001 0x00000000>;
+	};
+
+	soc {
+		uart0: uart@f8b00000 {
+			status = "ok";
+		};
+
+		uart2: uart@f8b02000 {
+			status = "ok";
+		};
+
+		i2c0: i2c@f8b10000 {
+			status = "ok";
+		};
+
+		i2c2: i2c@f8b12000 {
+			status = "ok";
+		};
+
+		spi0: spi@f8b1a000 {
+			status = "ok";
+		};
+
+		leds {
+			compatible = "gpio-leds";
+
+			user_led1 {
+				label = "user_led1";
+				gpios = <&gpio6 3 GPIO_ACTIVE_LOW>;
+				linux,default-trigger = "mmc0";
+				default-state = "off";
+			};
+
+			user_led2 {
+				label = "user_led2";
+				gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
+				default-state = "off";
+			};
+
+			user_led3 {
+				label = "user_led3";
+				gpios = <&gpio5 2 GPIO_ACTIVE_LOW>;
+				default-state = "off";
+			};
+
+			user_led4 {
+				label = "user_led4";
+				gpios = <&gpio10 6 GPIO_ACTIVE_LOW>;
+				default-state = "off";
+			};
+
+			wlan_active_led {
+				label = "wifi_active";
+				gpios = <&gpio4 6 GPIO_ACTIVE_LOW>;
+				linux,default-trigger = "wlan";
+				default-state = "off";
+			};
+
+			bt_active_led {
+				label = "bt_active";
+				gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
+				linux,default-trigger = "bt";
+				default-state = "off";
+			};
+		};
+	};
+};
