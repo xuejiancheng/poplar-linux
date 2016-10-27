@@ -104,3 +104,17 @@
 		};
 	};
 };
+
+&gmac1 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	mac-address = [00 00 00 00 00 00];
+	phy-handle = <&eth_phy1>;
+	phy-mode = "rgmii";
+	hisilicon,phy-reset-delays-us = <10000 10000 30000>;
+	status = "okay";
+
+	eth_phy1: ethernet_phy@1{
+		reg = <3>;
+	};
+};
