@@ -473,5 +473,12 @@
 			resets = <&crg 0xcc 9>, <&crg 0xcc 11>, <&gmacphyrst 1>;
 			reset-names = "mac_core", "mac_ifc", "phy";
 		};
+
+                ir: ir@f8001000 {
+                        compatible = "hisilicon,hix5hd2-ir";
+                        reg = <0xf8001000 0x1000>;
+                        interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
+                        clocks = <&sysctrl HISTB_IR_CLK>;
+                };
 	};
 };
