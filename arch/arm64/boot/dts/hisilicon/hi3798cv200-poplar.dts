@@ -11,54 +11,94 @@
 
 #include <dt-bindings/gpio/gpio.h>
 #include "hi3798cv200.dtsi"
-
+#include "poplar-pinctrl.dtsi"
 / {
 	model = "HiSilicon Poplar Development Board";
 	compatible = "hisilicon,hi3798cv200-poplar", "hisilicon,hi3798cv200";
 
 	aliases {
 		serial0 = &uart0;
-		serial2 = &uart2;
+		serial1 = &uart2;
+		spi0 = &spi0;
 	};
 
 	chosen {
 		stdout-path = "serial0:115200n8";
+	    bootargs = "mem=2G root=/dev/mmcblk0p7 rootfstype=ext4 rootwait rw blkdevparts=mmcblk0:2M(boot),4M(baseparam),4M(pqparam),\
+				4M(logo),88M(trustedcore),32M(kernel),256M(rootfs),-(others) earlycon";
 	};
 
 	memory@0 {
 		device_type = "memory";
-		reg = <0x0 0x0 0x0 0x80000000>;
+		reg = <0x000000000 0x00000000 0x00000001 0x00000000>;
 	};
-
-	leds {
-		compatible = "gpio-leds";
-
-		user-led0 {
-			label = "USER-LED0";
-			gpios = <&gpio6 3 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "heartbeat";
-			default-state = "off";
+	
+	soc {
+	
+	    uart0: uart@f8b00000 {
+			status = "ok";
 		};
 
-		user-led1 {
-			label = "USER-LED1";
-			gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "mmc0";
-			default-state = "off";
+		uart2: uart@f8b02000 {
+			status = "ok";
 		};
 
-		user-led2 {
-			label = "USER-LED2";
-			gpios = <&gpio5 2 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-			default-state = "off";
+		i2c0: i2c@f8b10000 {
+			status = "ok";
 		};
 
-		user-led3 {
-			label = "USER-LED3";
-			gpios = <&gpio10 6 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "cpu0";
-			default-state = "off";
+		i2c2: i2c@f8b12000 {
+			status = "ok";
+		};
+
+		spi0: spi@f8b1a000 {
+			status = "ok";
+		};
+
+	    leds {
+	     	compatible = "gpio-leds";
+
+		    user-led0 {
+		     	label = "USER-LED0";
+			    gpios = <&gpio6 3 GPIO_ACTIVE_LOW>;
+		    	linux,default-trigger = "heartbeat";
+		    	default-state = "off";
+		    };
+
+		    user-led1 {
+		    	label = "USER-LED1";
+		    	gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
+		    	linux,default-trigger = "mmc0";
+		    	default-state = "off";
+		    };
+
+		    user-led2 {
+		    	label = "USER-LED2";
+		    	gpios = <&gpio5 2 GPIO_ACTIVE_LOW>;
+		    	linux,default-trigger = "none";
+		    	default-state = "off";
+		    };
+
+		    user-led3 {
+		    	label = "USER-LED3";
+		    	gpios = <&gpio10 6 GPIO_ACTIVE_LOW>;
+		    	linux,default-trigger = "cpu0";
+		    	default-state = "off";
+		    };
+
+		    wlan_active_led {
+		    	label = "wifi_active";
+		    	gpios = <&gpio4 6 GPIO_ACTIVE_LOW>;
+		    	linux,default-trigger = "wlan";
+		    	default-state = "off";
+		    };
+
+		    bt_active_led {
+		    	label = "bt_active";
+		    	gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
+		    	linux,default-trigger = "bt";
+		    	default-state = "off";
+		    };
 		};
 	};
 };
@@ -132,31 +172,9 @@
 			  "USER-LED-3",	"";
 };
 
-&i2c0 {
-	status = "okay";
-	label = "LS-I2C0";
-};
-
-&i2c2 {
-	status = "okay";
-	label = "LS-I2C1";
-};
 
 &ir {
 	status = "okay";
 };
 
-&spi0 {
-	status = "okay";
-	label = "LS-SPI0";
-};
-
-&uart0 {
-	status = "okay";
-};
-
-&uart2 {
-	status = "okay";
-	label = "LS-UART0";
-};
 /* No optional LS-UART1 on Low Speed Expansion Connector. */
